@@ -1,0 +1,285 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.4.0</version>
+		<relativePath />
+	</parent>
+  
+  
+  <groupId>com.walmart.managedase.bot</groupId>
+  <artifactId>echo-bot</artifactId>
+  <version>0.0.12-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>echo-bot</name>
+  <description>echo-bot</description>
+
+ <properties>
+		<java.version>1.8</java.version>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<start-class>com.microsoft.bot.sample.echo.Application</start-class>
+		   <log4j2.version>2.17.1</log4j2.version>
+	 <lombok.version>1.18.10</lombok.version>
+	 <lombok-maven-plugin.version>1.18.10.0</lombok-maven-plugin.version>
+	</properties>
+
+  <scm>
+  	<!--<url>scm:https://gecgithub01.walmart.com/ManagedASE/spring-echo-bot.git</url>
+  	<connection>scm:git:https://gecgithub01.walmart.com/ManagedASE/spring-echo-bot.git</connection>-->
+  	<developerConnection>scm:git:https://gecgithub01.walmart.com/ManagedASE/spring-echo-bot.git</developerConnection>
+	<tag>HEAD</tag>
+  </scm>
+
+
+    <distributionManagement>
+    <repository>
+      <id>pangaea_releases</id>
+      <url>https://repository.walmart.com/content/repositories/pangaea_releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>pangaea_snapshots</id>
+      <name>pangaea_snapshots</name>
+      <url>https://repository.walmart.com/content/repositories/pangaea_snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+
+<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<version>2.4.0</version>
+			<scope>test</scope>
+			 <exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+ 
+		<dependency>
+			<groupId>com.microsoft.bot</groupId>
+			<artifactId>bot-integration-spring</artifactId>
+			<version>4.14.0</version>
+			<scope>compile</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-starter-logging</artifactId>
+					</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			  <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
+
+	<!-- lombok dependencies start -->
+	<dependency>
+		<groupId>org.projectlombok</groupId>
+		<artifactId>lombok</artifactId>
+		<version>${lombok.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.projectlombok</groupId>
+		<artifactId>lombok-maven-plugin</artifactId>
+		<version>${lombok-maven-plugin.version}</version>
+	</dependency>
+	<!-- lombok dependencies end -->
+
+	<dependency>
+		<groupId>org.json</groupId>
+		<artifactId>json</artifactId>
+		<version>20140107</version>
+	</dependency>
+
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>build</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<filtering>false</filtering>
+					</resource>
+				</resources>
+				<plugins>
+					<plugin>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.8.1</version>
+					</plugin>
+					<plugin>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>3.2.3</version>
+						<configuration>
+							<warSourceDirectory>src/main/webapp</warSourceDirectory>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>repackage</goal>
+								</goals>
+								<configuration>
+									<mainClass>com.microsoft.bot.sample.echo.Application</mainClass>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>com.microsoft.azure</groupId>
+						<artifactId>azure-spring-cloud-maven-plugin</artifactId>
+						<version>1.3.0</version>
+						<configuration>
+							<subscriptionId>846508ac-5cb6-427f-871a-529d23e808a0</subscriptionId>
+							<clusterName>smuthu3javabotapi</clusterName>
+							<appName>smuthujavabotapiapp</appName>
+							<isPublic>true</isPublic>
+
+							<deployment>
+								<cpu>1</cpu>
+								<memoryInGB>1</memoryInGB>
+								<instanceCount>1</instanceCount>
+								<runtimeVersion>Java 8</runtimeVersion>
+								<resources>
+									<resource>
+										<filtering />
+										<mergeId />
+										<targetPath />
+										<directory>${project.basedir}/target</directory>
+										<includes>
+											<include>*.jar</include>
+										</includes>
+									</resource>
+								</resources>
+							</deployment>
+						</configuration>
+					</plugin>
+					 <plugin>
+					      <groupId>org.apache.maven.plugins</groupId>
+					      <artifactId>maven-release-plugin</artifactId>
+					      <version>2.5.3</version>
+					      <configuration>
+						<localCheckout>true</localCheckout> <!-- must be true -->
+						<autoVersionSubmodules>true</autoVersionSubmodules>
+					      </configuration>
+					    </plugin>
+   
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>publish</id>
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>3.2.3</version>
+						<configuration>
+							<warSourceDirectory>src/main/webapp</warSourceDirectory>
+						</configuration>
+					</plugin>
+
+					
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.8</version>
+						<extensions>true</extensions>
+						<configuration>
+							<skipRemoteStaging>true</skipRemoteStaging>
+							<serverId>ossrh</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<configuration>
+							<source>8</source>
+							<failOnError>false</failOnError>
+						</configuration>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
+   
