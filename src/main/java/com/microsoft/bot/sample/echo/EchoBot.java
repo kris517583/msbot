@@ -54,9 +54,9 @@ public class EchoBot extends ActivityHandler {
         Activity reply =MessageFactory.attachment(createAdaptiveCardAttachment(turnContext.getActivity().getFrom().getId()
 		,turnContext.getActivity().getFrom().getName()));
 
-        //return turnContext.sendActivity(reply).thenApply(sendResult -> null);
+        return turnContext.sendActivity(MessageFactory.text("Hi")).thenApply(sendResult -> null);
 
-		return sendIntroCard(turnContext).thenApply(result -> null);
+		//return sendIntroCard(turnContext).thenApply(result -> null);
     }
 
 	private static Attachment createAdaptiveCardAttachment(String Id, String name) {
