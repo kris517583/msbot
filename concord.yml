@@ -1,0 +1,32 @@
+configuration:
+  # to use `ansible` task
+  dependencies:
+  - "mvn://com.walmartlabs.concord.plugins.basic:ansible-tasks:1.76.1"
+
+  arguments:
+    botAPIKeyPair: "botAPIKeyPair"
+    # default values
+forms:
+  BotAPISetupForm:
+  - appName: { label: "Microsoft App ID", type: "string", placeholder: "Place first name here" }
+  - password: { label: "Microsoft App Password", type: "string", inputType: 'password' }
+
+flows:
+  default:
+    - log: "Test"
+    - form: BotAPISetupForm
+      yield: true
+    - log: "${BotAPISetupForm.appName} - ${BotAPISetupForm.password}"
+    - task: ansible
+      in:
+        playbook: playbooks/playbook.yml
+            # remote server auth
+        privateKey: ${crypto.exportKeyAsFile(projectInfo.orgName, botAPIKeyPair, null).private}
+        extraVars:
+          MicrosoftAppID: "${BotAPISetupForm.appName}"
+          MicrosoftPassword: "${BotAPISetupForm.password}"
+        # inventory data, should match the playbook's host groups
+        inventory:
+          computes:
+            hosts: 
+            - "10.43.55.123"
