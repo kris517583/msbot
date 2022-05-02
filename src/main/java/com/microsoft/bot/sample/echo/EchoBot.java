@@ -51,6 +51,7 @@ public class EchoBot extends ActivityHandler {
     	log.info("getConversation : " + turnContext.getActivity().getConversation());
     	log.info("getType : " + turnContext.getActivity().getType());*/
 
+	    System.out.println("Hello");
         Activity reply =MessageFactory.attachment(createAdaptiveCardAttachment(turnContext.getActivity().getFrom().getId()
 		,turnContext.getActivity().getFrom().getName()));
 
