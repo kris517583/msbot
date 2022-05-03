@@ -3,20 +3,20 @@
 
 package com.microsoft.bot.sample.echo;
 
-import com.codepoetics.protonpack.collectors.CompletableFutures;
+import com.google.common.io.Resources;
 import com.microsoft.bot.builder.ActivityHandler;
 import com.microsoft.bot.builder.MessageFactory;
 import com.microsoft.bot.builder.TurnContext;
-import com.microsoft.bot.schema.ChannelAccount;
+import com.microsoft.bot.schema.Attachment;
+import com.microsoft.bot.schema.Serialization;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import com.fasterxml.jackson.databind.ObjectMapper; 
-import com.fasterxml.jackson.databind.ObjectWriter; 
+
 /**
  * This class implements the functionality of the Bot.
  *
@@ -43,26 +43,29 @@ public class EchoBot extends ActivityHandler {
     	log.info("getDeliveryMode : " + turnContext.getActivity().getDeliveryMode());
     	log.info("getConversation : " + turnContext.getActivity().getConversation());
     	log.info("getType : " + turnContext.getActivity().getType());*/
-    	 
-    	
-    	
-        return turnContext.sendActivity(
-            MessageFactory.text("Echo From Springboot: " + turnContext.getActivity().getText())
-        ).thenApply(sendResult -> null);
+
+
+        Attachment attachment = new Attachment();
+        attachment.setContentType("application/vnd.microsoft.card.adaptive");
+        try {
+            String card = readFile("Flight.json");
+            attachment.setContent(Serialization.jsonToTree(card));
+            return turnContext.sendActivity(
+                    MessageFactory.attachment(attachment)
+            ).thenApply(sendResult -> null);
+
+        }  catch (Exception ex) {
+            ex.printStackTrace();
+            return turnContext.sendActivity(
+                    MessageFactory.text("Echo From Springboot: " + turnContext.getActivity().getText())
+            ).thenApply(sendResult -> null);
+        }
+
     }
 
-    @Override
-    protected CompletableFuture<Void> onMembersAdded(
-        List<ChannelAccount> membersAdded,
-        TurnContext turnContext
-    ) {
-        String welcomeText = "Hello and welcome!";
-        log.info("On onMembersAdded...");
-        return membersAdded.stream()
-            .filter(
-                member -> !StringUtils
-                    .equals(member.getId(), turnContext.getActivity().getRecipient().getId())
-            ).map(channel -> turnContext.sendActivity(MessageFactory.text(welcomeText, welcomeText, null)))
-            .collect(CompletableFutures.toFutureList()).thenApply(resourceResponses -> null);
+    protected String readFile(String fileName) throws IOException
+    {
+        URL file = Resources.getResource(fileName);
+        return Resources.toString(file, Charset.defaultCharset());
     }
 }
