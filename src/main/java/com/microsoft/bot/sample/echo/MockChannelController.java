@@ -1,18 +1,26 @@
 package com.microsoft.bot.sample.echo;
 
-import com.microsoft.bot.schema.Activity;
-import com.microsoft.bot.schema.ResourceResponse;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.UUID;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.microsoft.bot.schema.Activity;
+import com.microsoft.bot.schema.ResourceResponse;
+ 
 
 @Slf4j
 @RestController
 @RequestMapping(value = "/v3/conversations")
 public class MockChannelController {
+		
 
 	@RequestMapping(value = "{conversationId}/activities/{activityId}",
             method = RequestMethod.POST,
